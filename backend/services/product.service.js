@@ -38,8 +38,16 @@ module.exports.getProductById = async (productId) => {
 }
 
 module.exports.removeProduct = async (productId) => {
+    console.log('data',productModel.findById(productId))
     const data = await productModel.findByIdAndDelete(productId)
     return data
+}
+
+
+module.exports.getAllProducts = async () => {
+
+    const product = await productModel.find()
+    return product
 }
 
 // module.exports.updateProduct = async (id) => {

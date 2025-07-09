@@ -37,7 +37,7 @@ module.exports.adminRegistration = async (req, res, next) => {
 console.log(admin)
     const token = jwt.sign({ _id: admin._id }, process.env.JWT_SECRET_KEY, { expiresIn: '24h' });
 
-    res.status(200).json({token, admin});
+    res.status(200).json({token, admin, message: "Seller account create successfully!"});
 
 }
 

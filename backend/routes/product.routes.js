@@ -12,4 +12,7 @@ router.get('/removeproductbyId', authMiddleware.getAdmin, productController.remo
 router.post('/updateproduct', authMiddleware.getAdmin, productController.updateProduct);
 
 
+router.get('/getproducts', productController.getProducts);
+
+
 module.exports = router;

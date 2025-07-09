@@ -6,9 +6,12 @@ function BestSaller() {
     const { products } = useContext(ShopContext);
     const [listbestSellar, setListBestSeller] = useState([]);
     useEffect(() => {
-        let bestsallerProduct = products.filter(x => x.bestseller == true);
-        setListBestSeller(bestsallerProduct.slice(0, 5));
-    }, [])
+        if (products != '') {
+            let bestsallerProduct = products.filter(x => x.bestseller == true);
+            setListBestSeller(bestsallerProduct.slice(5, 10));
+        }
+
+    }, [products])
     return (
         <div className='my-10'>
             <div className='text-center py-8 text-3xl'>
@@ -18,11 +21,11 @@ function BestSaller() {
                 </p>
             </div>
 
-             <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6 '>
+            <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6 '>
                 {
                     listbestSellar?.map((item) => (
-                        <ProductItem id={item._id} image={item.images} name={item.category} price={item.price} />
-                ))
+                        <ProductItem id={item._id} image={item.image} name={item.category} price={item.price} />
+                    ))
                 }
             </div>
         </div>

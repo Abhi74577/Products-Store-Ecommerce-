@@ -5,12 +5,15 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom';
 import { ShopContextProvider } from './context/ShopContext.jsx';
 import { ProfileContextProvider } from './context/ProfileContext.jsx';
+import { SellerContextProvider } from './context/SellerContext.jsx';
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
-  <ProfileContextProvider>
-    <ShopContextProvider>
-      <App />
-    </ShopContextProvider>
+    <ProfileContextProvider>
+      <SellerContextProvider>
+        <ShopContextProvider>
+          <App />
+        </ShopContextProvider>
+      </SellerContextProvider>
     </ProfileContextProvider>
   </BrowserRouter>
 )

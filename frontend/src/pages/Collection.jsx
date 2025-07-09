@@ -19,25 +19,27 @@ function Collection() {
     const data = [...new Set(products.map((item) => item.category))];
     setLstCategory(data);
     console.log(lstCategory);
-  }, []);
+  }, [products]);
 
   function applyFilter() {
     let subdata = [];
-
-    if (categoryValue.length === 0) {
-      subdata = [...new Set(products.map((item) => item.subCategory))];
-      setSubCategoryvalue([]);
-    } else {
-      subdata = [
-        ...new Set(
-          products
-            .filter((item) => categoryValue.includes(item.category))
-            .map((item) => item.subCategory)
-        )
-      ];
-      setSubCategoryvalue([])
+    if (products != '') {
+      if (categoryValue.length === 0) {
+        subdata = [...new Set(products.map((item) => item.subCategory))];
+        setSubCategoryvalue([]);
+      } else {
+        subdata = [
+          ...new Set(
+            products
+              .filter((item) => categoryValue.includes(item.category))
+              .map((item) => item.subCategory)
+          )
+        ];
+        setSubCategoryvalue([])
+      }
+      setLstSubCategory(subdata);
     }
-    setLstSubCategory(subdata);
+
   }
 
   useEffect(() => {
@@ -83,7 +85,7 @@ function Collection() {
 
   useEffect(() => {
     let data = products;
-    if(showSearch && search != ''){
+    if (showSearch && search != '') {
       data = products.filter(x => x.name.toLowerCase().includes(search.toLowerCase()));
     }
 
@@ -182,8 +184,8 @@ function Collection() {
         <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6'>
 
           {
-            finalProducts?.map((item) => (
-              <ProductItem id={item._id} image={item.images} name={item.name} price={item.price} />
+            finalProducts.length != 0 && finalProducts?.map((item, index) => (
+              <ProductItem key={index} id={item._id} image={item.image} name={item.name} price={item.price} />
             ))
           }
 

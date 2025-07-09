@@ -1,7 +1,8 @@
 import { createContext, useEffect, useState } from "react";
-import { products } from '../shared/data'
+// import { products } from '../shared/data'
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
+import axios from "axios";
 export const ShopContext = createContext({});
 
 export const ShopContextProvider = ({ children }) => {
@@ -9,9 +10,29 @@ export const ShopContextProvider = ({ children }) => {
     const currency = '₹';
     const delivery_fee = 20;
     const [showSearch, setShowSearch] = useState(false);
+    const [products, setProducts] = useState('');
     const [search, setSearch] = useState('');
     const [cartItems, setCartItems] = useState({})
 
+
+    const getProducts = async () => {
+        await axios.get(import.meta.env.VITE_API_URL + '/products/getproducts'
+        ).then((res) => {
+            if (res.status == 200) {
+                setProducts(res.data.products);
+
+                toast.success(res.data.message);
+            } else {
+                toast.error(response.data.message)
+            }
+        }).catch((error) => {
+            console.error(error)
+        })
+    }
+
+    useEffect(() => {
+        getProducts()
+    }, [])
     const addToCart = async (itemId, size) => {
 
         if (size == '') {
@@ -51,7 +72,7 @@ export const ShopContextProvider = ({ children }) => {
         return totalCount;
     }
 
-    const updateQuantity = async(itemId, size, quantity) => {
+    const updateQuantity = async (itemId, size, quantity) => {
         let cartData = structuredClone(cartItems);
 
         cartData[itemId][size] = quantity;
@@ -59,17 +80,17 @@ export const ShopContextProvider = ({ children }) => {
         setCartItems(cartData);
     }
 
-    const getCartAmount = () =>{
+    const getCartAmount = () => {
         let totalAmount = 0;
-        for(const items in cartItems){
-            let itemInfo = products.find(x=> x._id === items);
-            for(const item in cartItems[items]){
+        for (const items in cartItems) {
+            let itemInfo = products.find(x => x._id === items);
+            for (const item in cartItems[items]) {
                 try {
-                  if(cartItems[items][item] > 0){
-                    totalAmount += itemInfo.price * cartItems[items][item];
-                  }  
+                    if (cartItems[items][item] > 0) {
+                        totalAmount += itemInfo.price * cartItems[items][item];
+                    }
                 } catch (error) {
-                    console.error('Error in getCartAmount:', error);                    
+                    console.error('Error in getCartAmount:', error);
                 }
             }
         }
@@ -81,10 +102,10 @@ export const ShopContextProvider = ({ children }) => {
     }, [cartItems])
 
     const value = {
-        products,
+        products, setProducts,
         currency,
         delivery_fee, showSearch, setSearch, setShowSearch, search, addToCart, cartItems,
-         getCartCount, updateQuantity, getCartAmount
+        getCartCount, updateQuantity, getCartAmount
     }
 
     return (

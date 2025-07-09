@@ -55,9 +55,9 @@ module.exports.addProduct = async (req, res, next) => {
 module.exports.listOfProducts = async (req, res, next) => {
     try {
         const userData = req.adminUser;
-        const product = await productService.getProduct(userData._id)
-        console.log(product)
-        res.status(200).json({ product, message: 'Products get successfully.' })
+        const products = await productService.getProduct(userData._id)
+        // console.log(product)
+        res.status(200).json({ products, message: 'Products get successfully.' })
     } catch (error) {
         return res.status(400).json({ message: error })
     }
@@ -85,12 +85,15 @@ module.exports.getProductById = async (req, res, next) => {
 // Remove Product
 module.exports.removeProduct = async (req, res, next) => {
     try {
+        console.log(req.query);
+        
         const { productId } = req.query
-        if (!id) {
+        if (!productId) {
             return res.status(400).json({ message: 'Please pass productId in params.' })
         }
 
         const data = await productService.removeProduct(productId)
+        console.log(data)
         res.status(200).json({ data: true, message: 'Product delete successfully' })
 
     } catch (error) {
@@ -101,4 +104,17 @@ module.exports.removeProduct = async (req, res, next) => {
 // Update Product
 module.exports.updateProduct = async (req, res, next) => {
     
+}
+
+// Get All products by all sellers 
+// Get All Product
+module.exports.getProducts = async (req, res, next) => {
+    try {
+        const products = await productService.getAllProducts()
+        // console.log(product)
+        res.status(200).json({ products, message: 'Products get successfully.' })
+    } catch (error) {
+        return res.status(400).json({ message: error })
+    }
+
 }

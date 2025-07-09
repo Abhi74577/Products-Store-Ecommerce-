@@ -11,11 +11,11 @@ function Orders() {
         <Title text1={'my'} text2={'orders'} />
       </div>
       {
-        products.slice(0, 4).map((item, index) => (
+        products != '' && products.slice(0, 4)?.map((item, index) => (
           <div className='flex flex-col border-t border-gray-400 justify-start gap-4 py-4'>
             <div className='w-full flex flex-col sm:flex-row justify-between sm:items-center gap-4'>
               <div className='flex gap-10  text-gray-600'>
-                <img src={item.images[0]} alt='' className='w-20 h-20' />
+                <img src={item.image[0]} alt='' className='w-20 h-20' />
                 <div className='flex flex-col gap-2'>
                   <h1 className='text-sm font-semibold'>{item.name}</h1>
                   <div className='flex flex-wrap gap-2 text-sm font-medium text-gray-600'>

@@ -38,7 +38,7 @@ module.exports.userRegistration = async (req, res, next) => {
 
     const token = await gernateToken(user._id);
 
-    res.status(200).json({ token, user })
+    res.status(200).json({message: 'Registration successfull!' })
 
 }
 
