@@ -11,7 +11,7 @@ export const ProfileContextProvider = ({ children }) => {
      const [sellerData, setSellerData] = useState('')
 
     const GetProfileDataWithToken = async () => {
-        if (profileLocation == "Buyer" && localStorage.getItem('Token') != null) {
+        if (profileLocation != '' && profileLocation == "Buyer" && localStorage.getItem('Token') != null) {
             await axios.get(import.meta.env.VITE_API_URL + '/users/profile',
                 {
                     headers: { Authorization: 'bearer ' + localStorage.getItem('Token') }
@@ -28,7 +28,7 @@ export const ProfileContextProvider = ({ children }) => {
                 });
         }
         
-        if (profileLocation == "Seller" && localStorage.getItem('Token') != null){
+        if (profileLocation != '' && profileLocation == "Seller" && localStorage.getItem('Token') != null){
             await axios.get(import.meta.env.VITE_API_URL + '/admins/profile',
                 {
                     headers: { Authorization: 'bearer ' + localStorage.getItem('Token') }

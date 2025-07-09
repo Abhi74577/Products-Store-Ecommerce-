@@ -2,13 +2,15 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router'
 import { ShopContext } from '../context/ShopContext';
 import RelatedProduct from '../components/RelatedProduct';
-
+import { useNavigate } from 'react-router-dom';
 function Product() {
+  const navigate = useNavigate()
   const { productId } = useParams()
   const { products, currency, addToCart, cartItems } = useContext(ShopContext);
   const [product, setProduct] = useState({})
   const [size, setSize] = useState('')
   const [image, setImage] = useState('')
+  const [checkBtn, setCheckBtn] = useState(false)
   async function findProduct() {
     if (products != '') {
       products?.map((item) => {
@@ -28,6 +30,22 @@ function Product() {
   useEffect(() => {
     findProduct()
   }, [productId, products])
+
+  function sizeUpdateAndBtnChage(productId,item) {
+    const nb = item.toString()
+    setSize(item)
+    if (products != '') {
+      const data = cartItems.find(item => item.productId == productId && item.size == nb);
+      if (data) {
+        setCheckBtn(true);
+      }
+      else {
+        setCheckBtn(false);
+      }
+
+    }
+  }
+
   return product ? (
     <div className='w-full border-t-1 border-gray-50 pt-10 transition-opacity ease-in duration-500 opacity-100'>
       {/* product data  */}
@@ -50,19 +68,26 @@ function Product() {
         {/* product Info */}
 
         <div className='flex-1 text-sm md:text-lg sm:max-w-[55%]'>
-          <h1 className='font-medium  mt-2'>{product.name}</h1>
-          <p className='mt-2 sm:mt-5  font-bold'>{currency}{product.price}</p>
+          <h1 className='font-bold  mt-2'>{product.name}</h1>
+          <p className='mt-2 sm:mt-5  font-semibold'>{currency}{product.price}</p>
           <p className='mt-2 sm:mt-5  font-normal text-gray-700'>{product.description}</p>
           <h1 className='font-semibold  mt-5'>Select Size</h1>
           <div className='w-full flex flex-row  gap-2 items-center mt-2 '>
             {
               product.sizes?.map((item, idx) => (
-                <button className={`py-2 px-3 lg:px-5 text-center bg-gray-400 cursor-pointer text-sm lg:text-lg ${size == item ? 'border' : ''}`} key={idx} onClick={() => setSize(item)}>{item}</button>
+                <button className={`py-2 px-3 lg:px-5 text-center bg-gray-400 cursor-pointer text-sm lg:text-lg ${size == item ? 'border' : ''}`} key={idx} onClick={() => sizeUpdateAndBtnChage(product._id,item)}>{item}</button>
               ))
             }
           </div>
 
-          <div className='mt-7'><button className='py-2 px-3 sm:px-6 text-center bg-black cursor-pointer text-white text-sm  uppercase ' onClick={() => { addToCart(product._id, size) }}>Add To Cart</button></div>
+          <div className='mt-7'>
+            {
+
+             checkBtn ?
+                <button className='py-2 px-3 sm:px-6 text-center bg-black cursor-pointer text-white text-sm  uppercase ' onClick={() => { navigate('/cart') }}>Go To Cart</button>
+                : <button className='py-2 px-3 sm:px-6 text-center bg-black cursor-pointer text-white text-sm  uppercase ' onClick={() => { addToCart(product._id, size) }}>Add To Cart</button>
+            }
+          </div>
           <div className='mt-6 text-sm bg-gray-50 font-light flex flex-col gap-1 py-2 px-0.5'>
             <p>100% Original product.</p>
             <p>Cash on delivery is available on this product.</p>

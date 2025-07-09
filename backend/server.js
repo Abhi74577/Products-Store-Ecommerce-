@@ -7,6 +7,7 @@ const connectCloudinary = require('./config/cloudinary')
 const userRouter = require('./routes/userAuth.routes')
 const adminRouter = require('./routes/adminAuth.routes')
 const productRouter = require('./routes/product.routes')
+const cartRouter = require('./routes/cart.routes')
 //App Configuration
 const app = express();
 const port = process.env.PORT || 4000
@@ -23,7 +24,9 @@ app.use(express.urlencoded({ extended: true })); // for application/x-www-form-u
 
 app.use('/api/users', userRouter);
 app.use('/api/admins', adminRouter);
-app.use('/api/products', productRouter)
+app.use('/api/products', productRouter);
+app.use('/api/carts', cartRouter);
+
 // api endpoints
 app.get('/', (req,res) => {
     res.send("Api Working")

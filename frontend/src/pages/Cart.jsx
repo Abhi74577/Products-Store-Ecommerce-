@@ -4,44 +4,58 @@ import Title from '../components/Title';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import CartTotal from '../components/CartTotal';
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios';
+import { toast } from 'react-toastify';
 function Cart() {
-  const { products, currency, cartItems, updateQuantity } = useContext(ShopContext);
+  const { products, currency, cartItems, updateQuantity, getCarts } = useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
   const navigate = useNavigate()
 
   useEffect(() => {
     const tempData = [];
-    for (const items in cartItems) {
-      for (const item in cartItems[items]) {
-        if (cartItems[items][item] > 0) {
-          tempData.push({
-            _id: items,
-            size: item,
-            quntity: cartItems[items][item]
-          })
-        }
-      }
-    }
-    setCartData(tempData);
-  }, [cartItems])
+
+    setCartData(cartItems);
+  }, [cartItems,cartData,])
 
   useEffect(() => {
     console.log(cartData)
   }, [cartData])
 
+  async function removeItem(id) {
+    const token = localStorage.getItem('Token');
+    if ( token != null) {
+      await axios.get(import.meta.env.VITE_API_URL + '/carts/delteItem',
+        {
+          params: { cartId: id },
+          headers: {
+            Authorization: 'bearer ' + token
+          }
+        }).then((res) => {
+          if (res.status == 200) {
+            getCarts();
+            toast.success(res.data.message);
+          } else {
+            toast.error(res.data.message);
+          }
+        }).catch((error) => {
+          console.error(error)
+        })
+    }
+  }
+
   return (
-    <div className='border-t pt-14'>
+    <div className='border-t border-gray-50 pt-14'>
       <div className='text-2xl mb-3'>
         <Title text1={'Your'} text2={'Cart'} />
       </div>
 
       <div>
         {
-          cartData.map((item, index) => {
-            const productData = products.find(pro => pro._id === item._id);
+          cartData.length > 0 && cartData?.map((item, index) => {
+            const productData = products.find(pro => pro._id === item.productId);
 
             return (
-              <div key={index} className='py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2_fr_0.5fr] justify-center items-center gap-4'>
+              <div key={index} className='py-4 border-t border-b border-gray-100 text-gray-700 grid grid-cols-[2fr_0.5fr_0.5fr] sm:grid-cols-[3fr_2_fr_0.5fr] justify-center items-center gap-1 sm:gap-4'>
                 <div className='flex items-start gap-20 '>
                   <img src={productData.image[0]} className='w-20 object-cover' alt='' />
                   <div className=''>
@@ -52,8 +66,9 @@ function Cart() {
                     </div>
                   </div>
                 </div>
-                <input onChange={(e) => e.target.value === '' || e.target.value === '0' ? null : updateQuantity(item._id, item.size, Number(e.target.value))} className='border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1' type='number' min={1} defaultValue={item.quntity} />
-                <RiDeleteBin6Line className='text-xl hover:cursor-pointer' onClick={() => updateQuantity(item._id, item.size, 0)} />
+                <input onChange={(e) => e.target.value === '' || e.target.value === '0' ? null : updateQuantity(item._id, Number(e.target.value))}
+                  className='border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1' type='number' min={1} value={item.sizeTotal} defaultValue={item.sizeTotal} />
+                <RiDeleteBin6Line className='text-xl hover:cursor-pointer' onClick={() => removeItem(item._id)} />
               </div>
             )
           })
