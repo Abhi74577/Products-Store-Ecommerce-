@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import Input from '../commonPages/input';
+import Input from '../commonPages/InputBox';
 import { ProfileContext } from '../context/ProfileContext';
 import { toast } from 'react-toastify'
 import axios from 'axios';

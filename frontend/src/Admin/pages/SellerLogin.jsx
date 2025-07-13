@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import Input from '../../commonPages/input'
+import Input from '../../commonPages/InputBox'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify'
