@@ -28,7 +28,6 @@ module.exports.getbyuser = async (userId) => {
 module.exports.update = async (cartId, btnNb) => {
     console.log(cartId, btnNb)
     const data = await cartModel.findById(cartId);
-
     if (data) {
         console.log('update', data)
         const cartData = await cartModel.findByIdAndUpdate(data._id, { sizeTotal: btnNb });

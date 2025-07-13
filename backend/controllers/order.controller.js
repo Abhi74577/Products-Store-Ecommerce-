@@ -5,10 +5,12 @@ const orderModel = require('../models/order.model')
 // Placing Order using COD Method
 module.exports.placeOrder = async (req, res, next) => {
     try {
-        const { userId, items, amount, address } = req.body;
+        const { items, amount, address } = req.body;
+
+        const userData = req.user
 
         const orderData = {
-            userId,
+            userId: userData._id,
             items,
             address,
             amount,
@@ -19,14 +21,22 @@ module.exports.placeOrder = async (req, res, next) => {
 
         const newOrder = new orderModel(orderData)
         await newOrder.save()
+        console.log(items)
 
-        items.forEach(item => {
-            cartModel.findByIdAndUpdate(item, { orderComplete: true })
-        });
+        await Promise.all(items.map(async item => {
+            const cartdata = await cartModel.findById(item._id);
+            console.log(cartdata);
 
-        res.status(200).json({message:"Order Placed"})
+            // if (!cartdata || cartdata.orderComplete) return;
+
+            await cartModel.findByIdAndUpdate(item._id, { orderComplete: true });
+        }));
+
+
+
+        res.status(200).json({ message: "Order Placed" })
     } catch (error) {
-
+        return res.status(400).json({ message: error })
     }
 }
 
@@ -37,6 +47,44 @@ module.exports.placeOrderRazorpay = async (req, res, next) => {
 
 // Get User order
 module.exports.getorderByUser = async (req, res, next) => {
+    try {
+        const user = req.user;
+        const orderfullData = [];
+
+        const orders = await orderModel.find({ userId: user._id });
+
+        await Promise.all(orders.map(async (order) => {
+            const cartItemsData = [];
+
+            await Promise.all(order.items.map(async (cartItem) => {
+                const cartdata = await cartModel.findById(cartItem._id);
+                if (cartdata) {
+                    cartItemsData.push(cartdata);
+                }
+            }));
+
+            orderfullData.push({
+                _id: order._id,
+                address: order.address,
+                amount: order.amount,
+                date: order.date,
+                payment: order.payment,
+                paymentMethod: order.paymentMethod,
+                status: order.status,
+                cartItemsData: cartItemsData
+            });
+        }));
+
+        res.status(200).json({
+            orders: orderfullData,
+            message: "Orders fetched successfully."
+        });
+
+    } catch (error) {
+        return res.status(400).json({ message: error })
+    }
+
+
 
 }
 
