@@ -34,7 +34,7 @@ function Product() {
   function sizeUpdateAndBtnChage(productId,item) {
     const nb = item.toString()
     setSize(item)
-    if (products != '') {
+    if (products != '' && cartItems != '') {
       const data = cartItems.find(item => item.productId == productId && item.size == nb);
       if (data) {
         setCheckBtn(true);

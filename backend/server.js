@@ -8,6 +8,7 @@ const userRouter = require('./routes/userAuth.routes')
 const adminRouter = require('./routes/adminAuth.routes')
 const productRouter = require('./routes/product.routes')
 const cartRouter = require('./routes/cart.routes')
+const orderRouter = require('./routes/order.routes')
 //App Configuration
 const app = express();
 const port = process.env.PORT || 4000
@@ -26,6 +27,7 @@ app.use('/api/users', userRouter);
 app.use('/api/admins', adminRouter);
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
+app.use('/api/orders', orderRouter);
 
 // api endpoints
 app.get('/', (req,res) => {

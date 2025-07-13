@@ -1,14 +1,14 @@
 const cartModel = require('../models/cart.model')
 
 
-module.exports.add = async ({ productId, size, sizeTotal, userId, date }) => {
+module.exports.add = async ({ productId, size, sizeTotal, userId, date, orderComplete}) => {
     if (!productId || !size || !userId || !date || !sizeTotal) {
         throw new Error("All filed required.");
 
     }
 
     const data = cartModel.create({
-        productId, size, sizeTotal, userId, date
+        productId, size, sizeTotal, userId, date, orderComplete
     });
 
     return data
@@ -20,7 +20,7 @@ module.exports.getbyuser = async (userId) => {
         throw new Error("error in get cart.");
 
     }
-    const data = cartModel.find({ userId: userId })
+    const data = cartModel.find({ userId: userId})
 
     return data;
 }

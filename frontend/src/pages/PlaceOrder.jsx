@@ -1,13 +1,56 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Title from '../components/Title'
 import CartTotal from '../components/CartTotal'
 import { useNavigate } from 'react-router-dom'
+import { ShopContext } from '../context/ShopContext'
 
 function PlaceOrder() {
-  const [paymentMethod, setPaymentMethod] = useState('')
   const navigate = useNavigate()
+  const { products, currency, cartItems, updateQuantity, getCarts } = useContext(ShopContext);
+  const [paymentMethod, setPaymentMethod] = useState('')
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    street: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: '',
+    phoneNb: ''
+  });
+
+
+  const onChangeHandler = (event) => {
+    name = event.target.name,
+      value = event.target.value
+
+    setFormData(data => ({ ...data, [name]: value }))
+  }
+
+
+  const onSubmitHandler = async (event) => {
+    event.preventDefault()
+    try {
+      const orderItems = [];
+
+      for (const items in cartItems) {
+        orderItems.push(cartItems[items]._id)
+      }
+
+      console.log('orderItems', orderItems)
+
+
+
+    } catch (error) {
+
+    }
+  }
+
+
+
   return (
-    <div className='flex flex-col sm:flex-row justify-between  my-15 px-6 gap-10'>
+    <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-between  my-15 px-6 gap-10'>
 
       {/* left side */}
       <div className='flex flex-col  gap-4 w-full sm:w-[480px]'>
@@ -15,20 +58,28 @@ function PlaceOrder() {
           <Title text1={'delivery'} text2={'information'} />
         </div>
         <div className='flex gap-4'>
-          <input type='text' className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='First Name' />
-          <input type='text' className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Last Name' />
+          <input type='text' name='firstName' value={formData.firstName} onChange={onChangeHandler}
+            className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='First Name' />
+          <input type='text' name='lastName' value={formData.lastName} onChange={onChangeHandler}
+            className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Last Name' />
         </div>
-        <input type='email' className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Eamil address' />
-        <input type='text' className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Street' />
+        <input type='email' name='email' value={formData.email} onChange={onChangeHandler}
+          className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Eamil address' />
+        <input type='text' name='street' value={formData.street} onChange={onChangeHandler}
+          className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Street' />
         <div className='flex gap-4'>
-          <input type='text' className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='City' />
-          <input type='text' className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='State' />
+          <input type='text' name='city' value={formData.city} onChange={onChangeHandler} className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='City' />
+          <input type='text' name='state' value={formData.state} onChange={onChangeHandler}
+            className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='State' />
         </div>
         <div className='flex gap-4'>
-          <input type='number' className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Zipcode' />
-          <input type='text' className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Country' />
+          <input type='number' name='zipCode' value={formData.zipCode} onChange={onChangeHandler}
+            className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Zipcode' />
+          <input type='text' name='country' value={formData.country} onChange={onChangeHandler}
+            className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Country' />
         </div>
-        <input type='number' className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Phone' min={0} />
+        <input type='number' name='phoneNb' value={formData.phoneNb} onChange={onChangeHandler}
+          className='w-full border-gray-400 border outline-none py-1 px-4 text-sm sm:text-lg text-gray-600 font-medium rounded-md' placeholder='Phone' min={0} />
       </div>
 
       {/* Rigth Side  */}
@@ -61,13 +112,14 @@ function PlaceOrder() {
           </div>
         </div>
         <div className='w-full text-end'>
-          <button onClick={() => navigate('/orders')} className='px-3 py-2 text-center bg-black text-white text-xs uppercase cursor-pointer'>place order</button>
+          {/* onClick={() => navigate('/orders')} */}
+          <button className='px-3 py-2 text-center bg-black text-white text-xs uppercase cursor-pointer'>place order</button>
         </div>
       </div>
 
 
 
-    </div>
+    </form>
   )
 }
 

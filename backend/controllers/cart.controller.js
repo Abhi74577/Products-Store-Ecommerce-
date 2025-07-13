@@ -15,7 +15,7 @@ module.exports.addCart = async (req, res, next) => {
         }
 
         const cart = await cartService.add({
-            productId, size, sizeTotal, userId: userData._id, date: Date.now()
+            productId, size, sizeTotal, userId: userData._id, date: Date.now(), orderComplete: false
         })
 
         res.status(200).json({ cart, message: 'Item added to cart' })
