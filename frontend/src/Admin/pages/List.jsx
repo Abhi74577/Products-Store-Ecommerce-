@@ -72,7 +72,7 @@ function List() {
             <p className='cursor-pointer' onClick={() => removeProduct(item._id)}><RiDeleteBin5Line /></p>
           </div>
 
-          <div key={index} className='flex-block md:hidden border border-gray-100 shadow bg-white px-3 py-1 flex justify-between items-center gap-2  text-sm' >
+          <div key={item._id} className='flex-block md:hidden border border-gray-100 shadow bg-white px-3 py-1 flex justify-between items-center gap-2  text-sm' >
             <img src={item.image[0]} className='w-20 h-20 border rounded-md border-gray-100 object-center ' alt="" />
             <div className='flex flex-col justify-start items-center'>
 

@@ -64,7 +64,7 @@ function Navbar({setToken}) {
                     <div className='group-hover:block hidden absolute dropdown-menu right-0 pt-4'>
                         <div className='flex flex-col gap-2 w-35 py-3 px-5 bg-slate-100 text-gray-500 rounded'>
                             <p className='cursor-pointer hover:text-black text-sm'>My Profile</p>
-                            <p className='cursor-pointer hover:text-black text-sm'>Orders</p>
+                            <Link to='orders'>  <p className='cursor-pointer hover:text-black text-sm'>Orders</p></Link>
                             <p className='cursor-pointer hover:text-black text-sm'>Logout</p>
                             <p className='cursor-pointer hover:text-black text-sm' onClick={() => { GotoSeller() }}>Become a Seller</p>
                         </div>
@@ -79,8 +79,8 @@ function Navbar({setToken}) {
                         isSmPopup && <div className='absolute dropdown-menu right-0 pt-4'>
                             <div className='flex flex-col gap-2 w-35 py-3 px-5 bg-slate-100 text-gray-500 rounded'>
                                 {userData == '' && <Link to='login'> <p className='cursor-pointer hover:text-black text-sm' onClick={() =>  setIsSmPopup(!isSmPopup)}>Login</p></Link>}
-                                <p className='cursor-pointer hover:text-black text-sm'>My Profile</p>
-                                <p className='cursor-pointer hover:text-black text-sm'>Orders</p>
+                                <p className='cursor-pointer hover:text-black text-sm' onClick={() =>  setIsSmPopup(!isSmPopup)}>My Profile</p>
+                               <Link to='orders'> <p className='cursor-pointer hover:text-black text-sm' onClick={() =>  setIsSmPopup(!isSmPopup)}>Orders</p></Link>
                                 <p className='cursor-pointer hover:text-black text-sm'>Logout</p>
                                 <p className='cursor-pointer hover:text-black text-sm' onClick={() => { GotoSeller() }}>Become a Seller</p>
                             </div>

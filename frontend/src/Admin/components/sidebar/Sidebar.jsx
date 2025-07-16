@@ -6,7 +6,7 @@ import './admin.css'
 function Sidebar() {
     return (
 
-        <div className='w-[40px] sm:w-[180px] md:w-[200px] h-screen border-r border-gray-500 transition duration-75 ease-in-out'>
+        <div className='w-[40px] sm:w-[180px] md:w-[200px] h-full border-r border-gray-500 transition duration-75 ease-in-out'>
             <div className='w-full flex flex-col items-center gap-5 active_css'>
                 {/* <div className=''> */}
                 <NavLink

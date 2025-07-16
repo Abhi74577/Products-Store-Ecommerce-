@@ -9,10 +9,14 @@ router.get('/updatestatus', authMiddleware.getAdmin, orderController.updateStatu
 
 //Payment Features
 router.post('/placeOrder', authMiddleware.getUser, orderController.placeOrder);
-router.post('/razorpay', authMiddleware.getUser, orderController.placeOrder);
+router.post('/razorpay', authMiddleware.getUser, orderController.placeOrderRazorpay);
 
 // user Features
 router.get('/getorder', authMiddleware.getUser, orderController.getorderByUser)
+
+
+//razor pay verify 
+router.post('/verify', authMiddleware.getUser, orderController.verifyRazorPay)
 
 
 module.exports = router;

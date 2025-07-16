@@ -21,7 +21,7 @@ export const ShopContextProvider = ({ children }) => {
             if (res.status == 200) {
                 setProducts(res.data.products);
 
-                toast.success(res.data.message);
+                // toast.success(res.data.message);
             } else {
                 toast.error(response.data.message)
             }
@@ -51,7 +51,10 @@ export const ShopContextProvider = ({ children }) => {
                 console.error(error)
             })
         } else {
-            toast.warning('Please Login First.')
+            if (profileLocation != '' && profileLocation == "Buyer") {
+                toast.warning('Please Login First.')
+            }
+
         }
 
     }

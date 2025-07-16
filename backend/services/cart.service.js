@@ -20,7 +20,7 @@ module.exports.getbyuser = async (userId) => {
         throw new Error("error in get cart.");
 
     }
-    const data = cartModel.find({ userId: userId})
+    const data = cartModel.find({ userId: userId, orderComplete: false})
 
     return data;
 }

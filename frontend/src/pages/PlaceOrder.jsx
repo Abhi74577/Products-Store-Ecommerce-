@@ -4,11 +4,11 @@ import CartTotal from '../components/CartTotal'
 import { useNavigate } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
 import axios from 'axios'
-
+import { toast } from 'react-toastify'
 function PlaceOrder() {
   const token = localStorage.getItem('Token')
   const navigate = useNavigate();
-  const { products, currency, cartItems, updateQuantity, getCarts, getCartAmount, delivery_fee } = useContext(ShopContext);
+  const { products, currency, cartItems, updateQuantity, getCarts, getCartAmount, delivery_fee, } = useContext(ShopContext);
   const [paymentMethod, setPaymentMethod] = useState('cod')
   const [formData, setFormData] = useState({
     firstName: '',
@@ -30,6 +30,52 @@ function PlaceOrder() {
     setFormData(data => ({ ...data, [name]: value }))
   }
 
+  const initPay = (order) => {
+    console.log('first')
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: 'Order Payment',
+      description: 'Order Payment',
+      order_id: order.id,
+      receipt: order.receipt,
+      handler: async (response) => {
+        console.log(response)
+        try {
+          await axios.post(import.meta.env.VITE_API_URL + '/orders/verify', response,
+            {
+              headers: {
+                Authorization: 'bearer ' + token
+              }
+            }).then((res) => {
+              console.log(res)
+              if (res.status == 200) {
+                toast.success('Payment Successfully')
+                setFormData({});
+                navigate('/orders');
+                getCarts();
+              }
+              else {
+                console.log(res)
+                // navigate('/login')
+              }
+            }).catch((error) => {
+              console.error(error);
+
+            })
+        } catch (error) {
+          console.error(error);
+
+        }
+      }
+    }
+    console.log('options', options)
+    const rzp = new window.Razorpay(options);
+    console.log(rzp);
+    rzp.open();
+  }
+
 
   const onSubmitHandler = async (event) => {
     event.preventDefault()
@@ -37,7 +83,7 @@ function PlaceOrder() {
       const orderItems = [];
 
       for (const items in cartItems) {
-        orderItems.push({_id:cartItems[items]._id})
+        orderItems.push({ _id: cartItems[items]._id })
       }
 
       console.log('orderItems', orderItems)
@@ -51,7 +97,7 @@ function PlaceOrder() {
       switch (paymentMethod) {
         case "cod":
 
-         await axios.post(import.meta.env.VITE_API_URL + '/orders/placeOrder', orderData,
+          await axios.post(import.meta.env.VITE_API_URL + '/orders/placeOrder', orderData,
             {
               headers: {
                 Authorization: 'bearer ' + token
@@ -61,6 +107,7 @@ function PlaceOrder() {
               if (res.status == 200) {
                 setFormData({});
                 navigate('/orders')
+                getCarts()
               }
               else {
                 console.log(res)
@@ -73,6 +120,30 @@ function PlaceOrder() {
 
           break;
 
+        case "razorpay":
+          await axios.post(import.meta.env.VITE_API_URL + '/orders/razorpay', orderData,
+            {
+              headers: {
+                Authorization: 'bearer ' + token
+              }
+            }).then((res) => {
+              console.log(res)
+              if (res.status == 200) {
+                initPay(res.data.order)
+                // setFormData({});
+                // navigate('/orders')
+              }
+              else {
+                console.log(res)
+
+                // navigate('/login')
+              }
+            }).catch((error) => {
+              console.error(error);
+
+            })
+          break;
+
         default:
           break;
       }
@@ -82,6 +153,10 @@ function PlaceOrder() {
     } catch (error) {
 
     }
+  }
+
+  const verifyPaymentOrder = (razorpay_order_id) => {
+
   }
 
 
@@ -133,11 +208,8 @@ function PlaceOrder() {
             <Title text1={'payment'} text2={'method'} />
           </div>
 
-          <div className='w-full flex flex-col sm:flex-row sm:flex-wrap justify-between items-start sm:items-center gap-3'>
-            <div className='flex justify-between items-center gap-3 border-1 border-gray-400 rounded-md px-[13px] sm:px-[20px] py-1 cursor-pointer'>
-              <p className={`w-3 h-3 border-1 border-gray-500 rounded-full ${paymentMethod === 'strip' ? 'bg-green-400' : 'bg-white'}`} onClick={() => setPaymentMethod('strip')}></p>
-              <p className='text-sm font-bold text-blue-900 text-center italic'>Strip</p>
-            </div>
+          <div className='w-full flex flex-col sm:flex-row sm:flex-wrap justify-normal items-start sm:items-center gap-3'>
+
             <div className='flex justify-between items-center gap-3 border-1 border-gray-400 rounded-md px-[13px] sm:px-[20px] py-1 cursor-pointer'>
               <p className={`w-3 h-3 border-1 border-gray-500 rounded-full ${paymentMethod === 'razorpay' ? 'bg-green-400' : 'bg-white'}`} onClick={() => setPaymentMethod('razorpay')}></p>
               <p className='text-sm font-bold text-blue-900 text-center italic'>Razorpay</p>
@@ -150,7 +222,7 @@ function PlaceOrder() {
         </div>
         <div className='w-full text-end'>
           {/* onClick={() => navigate('/orders')} */}
-          <button className='px-3 py-2 text-center bg-black text-white text-xs uppercase cursor-pointer'>place order</button>
+          <button className='px-5 py-2 text-center bg-black text-white text-xs uppercase cursor-pointer'>place order</button>
         </div>
       </div>
 

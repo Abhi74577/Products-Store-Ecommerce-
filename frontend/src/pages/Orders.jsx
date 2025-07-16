@@ -21,7 +21,7 @@ function Orders() {
             order.cartItemsData.forEach((item) => {
               const product = products.find(x => x._id === item.productId);
               if (product) {
-                foundProducts.push({ product, order_Id: order._id, status: order.status, date: new Date(order.date).toLocaleDateString(), qty: item.sizeTotal, size:item.size });
+                foundProducts.push({ product, order_Id: order._id, status: order.status, date: new Date(order.date).toLocaleDateString(), qty: item.sizeTotal, size: item.size });
                 console.log('productData', product);
               }
             });
@@ -31,7 +31,7 @@ function Orders() {
         }
 
       }).catch((error) => {
-
+        console.error(error)
       })
   }
 
