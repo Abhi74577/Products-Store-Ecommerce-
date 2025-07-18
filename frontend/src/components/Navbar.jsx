@@ -9,7 +9,8 @@ import { RiCloseLargeLine } from "react-icons/ri";
 import { ShopContext } from '../context/ShopContext';
 import { ProfileContext } from '../context/ProfileContext';
 import './user.css'
-function Navbar({setToken}) {
+import axios from 'axios';
+function Navbar({ setToken, token }) {
     const { setShowSearch, getCartCount } = useContext(ShopContext);
     const { profileLocation, setProfileLocation, userData, setUserData } = useContext(ProfileContext);
     const [isMenu, setIsMenu] = useState(false);
@@ -24,6 +25,31 @@ function Navbar({setToken}) {
         // window.location.reload()
 
     }
+
+    async function logout() {
+        await axios.get(import.meta.env.VITE_API_URL + '/users/logout', {
+            headers: {
+                Authorization: 'bearer ' + token
+            }
+        }).then((response) => {
+            console.log(response)
+            if (response.status == 200) {
+                localStorage.removeItem('Token');
+                localStorage.setItem('Profile', 'Buyer');
+                setToken('');
+                setProfileLocation('Buyer')
+                navigate('/')
+            }
+        }).catch((error) => {
+            console.error(error);
+
+        })
+
+
+        // window.location.reload()
+
+    }
+    
     return (
         <div className='flex justify-between items-center py-2 font-medium '>
             <NavLink to='/'>
@@ -53,48 +79,51 @@ function Navbar({setToken}) {
                 </NavLink>
 
             </ul>
+            {  token != '' ?
+                <div className='flex items-center gap-5'>
+                    <FiSearch className='text-xl sm:text-[22px] cursor-pointer' onClick={() => { setShowSearch(true) }} />
 
-            <div className='flex items-center gap-5'>
-                <FiSearch className='text-xl sm:text-[22px] cursor-pointer' onClick={() => { setShowSearch(true) }} />
-
-                <div className='hidden sm:block group relative'>
-                    {userData == '' ? <Link to='login'><LuUsersRound className='text-xl sm:text-[22px] cursor-pointer' /></Link> :
-                        <p className='cursor-pointer hover:text-black text-sm sm:text-base'>{userData.name}</p>
-                    }
-                    <div className='group-hover:block hidden absolute dropdown-menu right-0 pt-4'>
-                        <div className='flex flex-col gap-2 w-35 py-3 px-5 bg-slate-100 text-gray-500 rounded'>
-                            <p className='cursor-pointer hover:text-black text-sm'>My Profile</p>
-                            <Link to='orders'>  <p className='cursor-pointer hover:text-black text-sm'>Orders</p></Link>
-                            <p className='cursor-pointer hover:text-black text-sm'>Logout</p>
-                            <p className='cursor-pointer hover:text-black text-sm' onClick={() => { GotoSeller() }}>Become a Seller</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className='block sm:hidden relative'>
-                    {userData == '' ? <LuUsersRound className='text-xl sm:text-[22px] cursor-pointer' onClick={() => setIsSmPopup(!isSmPopup)} /> :
-                        <p className='cursor-pointer hover:text-black text-sm sm:text-base' onClick={() => setIsSmPopup(!isSmPopup)}>{userData.name}</p>
-                    }
-                    {
-                        isSmPopup && <div className='absolute dropdown-menu right-0 pt-4'>
+                    <div className='hidden sm:block group relative'>
+                        {userData == '' ? <Link to='login'><LuUsersRound className='text-xl sm:text-[22px] cursor-pointer' /></Link> :
+                            <p className='cursor-pointer hover:text-black text-sm sm:text-base'>{userData.name}</p>
+                        }
+                        <div className='group-hover:block hidden absolute dropdown-menu right-0 pt-4'>
                             <div className='flex flex-col gap-2 w-35 py-3 px-5 bg-slate-100 text-gray-500 rounded'>
-                                {userData == '' && <Link to='login'> <p className='cursor-pointer hover:text-black text-sm' onClick={() =>  setIsSmPopup(!isSmPopup)}>Login</p></Link>}
-                                <p className='cursor-pointer hover:text-black text-sm' onClick={() =>  setIsSmPopup(!isSmPopup)}>My Profile</p>
-                               <Link to='orders'> <p className='cursor-pointer hover:text-black text-sm' onClick={() =>  setIsSmPopup(!isSmPopup)}>Orders</p></Link>
-                                <p className='cursor-pointer hover:text-black text-sm'>Logout</p>
+                                <p className='cursor-pointer hover:text-black text-sm'>My Profile</p>
+                                <Link to='orders'>  <p className='cursor-pointer hover:text-black text-sm'>Orders</p></Link>
+                                <p className='cursor-pointer hover:text-black text-sm' onClick={() => { logout() }}>Logout</p>
                                 <p className='cursor-pointer hover:text-black text-sm' onClick={() => { GotoSeller() }}>Become a Seller</p>
                             </div>
                         </div>
-                    }
+                    </div>
 
-                </div>
+                    <div className='block sm:hidden relative'>
+                        {userData == '' ? <LuUsersRound className='text-xl sm:text-[22px] cursor-pointer' onClick={() => setIsSmPopup(!isSmPopup)} /> :
+                            <p className='cursor-pointer hover:text-black text-sm sm:text-base' onClick={() => setIsSmPopup(!isSmPopup)}>{userData.name}</p>
+                        }
+                        {
+                            isSmPopup && <div className='absolute dropdown-menu right-0 pt-4'>
+                                <div className='flex flex-col gap-2 w-35 py-3 px-5 bg-slate-100 text-gray-500 rounded'>
+                                    {userData == '' && <Link to='login'> <p className='cursor-pointer hover:text-black text-sm' onClick={() => setIsSmPopup(!isSmPopup)}>Login</p></Link>}
+                                    <p className='cursor-pointer hover:text-black text-sm' onClick={() => setIsSmPopup(!isSmPopup)}>My Profile</p>
+                                    <Link to='orders'> <p className='cursor-pointer hover:text-black text-sm' onClick={() => setIsSmPopup(!isSmPopup)}>Orders</p></Link>
+                                    <p className='cursor-pointer hover:text-black text-sm' onClick={() => { logout() }}>Logout</p>
+                                    <p className='cursor-pointer hover:text-black text-sm' onClick={() => { GotoSeller() }}>Become a Seller</p>
+                                </div>
+                            </div>
+                        }
 
-                <Link to='/cart' className='relative'>
-                    <LuShoppingCart className='text-xl sm:text-[22px] min-w-5' />
-                    <p className='absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>{getCartCount()}</p>
-                </Link>
-                <RiMenuFoldLine className='text-xl sm:text-[25px] min-w-5 block sm:hidden cursor-pointer' onClick={() => { setIsMenu(true); setIsSmPopup(false) }} />
-            </div>
+                    </div>
+
+                    <Link to='/cart' className='relative'>
+                        <LuShoppingCart className='text-xl sm:text-[22px] min-w-5' />
+                        <p className='absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>{getCartCount()}</p>
+                    </Link>
+                    <RiMenuFoldLine className='text-xl sm:text-[25px] min-w-5 block sm:hidden cursor-pointer' onClick={() => { setIsMenu(true); setIsSmPopup(false) }} />
+                </div> : <Link to='login'><button className='px-4 py-1 bg-blue-600 font-bold text-[16px] text-white rounded-md cursor-pointer hover:bg-black' type='button' >Login</button></Link>
+
+            }
+
 
 
             {isMenu &&

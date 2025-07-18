@@ -48,8 +48,8 @@ function App() {
   return (<>
     {
       (profileLocation === 'Buyer') && <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:[9vw]'>
-        <ToastContainer />
-        <Navbar setToken={setToken}/>
+        <ToastContainer position="bottom-center" />
+        <Navbar setToken={setToken} token={token}/>
         <Search />
         <Routes>
           <Route path='/' element={<Home />} />

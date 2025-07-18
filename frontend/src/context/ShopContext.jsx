@@ -3,10 +3,12 @@ import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
 import axios from "axios";
+import { useNavigate } from "react-router";
+
 export const ShopContext = createContext({});
 
 export const ShopContextProvider = ({ children }) => {
-
+const navigate = useNavigate();
     const currency = '₹';
     const delivery_fee = 20;
     const [showSearch, setShowSearch] = useState(false);
@@ -93,6 +95,7 @@ export const ShopContextProvider = ({ children }) => {
                 })
         }
         else {
+            navigate('/login')
             return toast.warning('Please Login First.')
         }
 
